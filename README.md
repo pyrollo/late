@@ -9,7 +9,7 @@ This Minetest library adds possibility to easily create temporary effects affect
 
 This library does not directly offer anything new to the game. It has to be used by other mods.
 
-**API**: See [API.md] document please.
+**API**: See [API.md](https://github.com/pyrollo/late/blob/master/API.md) document please.
 
 ## Expected improvements
 
