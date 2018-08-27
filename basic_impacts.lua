@@ -246,7 +246,7 @@ late.register_impact_type('player', 'vision', {
 			local vision = late.multiply_valints(
 				late.get_valints(impact.params, 1))
 			if vision > 1 then vision = 1 end
-			local text = "effect_black_pixel.png^[colorize:#000000^[opacity:"..
+			local text = "late_black_pixel.png^[colorize:#000000^[opacity:"..
 				math.ceil(255-vision*255)
 			if impact.vars.hudid then
 				impact.target:hud_change(impact.vars.hudid, 'text', text) 
