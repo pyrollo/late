@@ -1,4 +1,4 @@
-# LATE - Library for Adding Temporary Effects
+# LATE - Library Adding Temporary Effects
 This Minetest library adds possibility to easily create temporary effects affecting players and mobs.
 
 **Version**: Alpha
@@ -9,7 +9,7 @@ This Minetest library adds possibility to easily create temporary effects affect
 
 This library does not directly offer anything new to the game. It has to be used by other mods.
 
-**API**: See [API.md] document please.
+**API**: See [API.md](https://github.com/pyrollo/late/blob/master/API.md) document please.
 
 ## Expected improvements
 
