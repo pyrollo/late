@@ -1,4 +1,4 @@
-# LATE - Library for Adding Temporary Effects
+# LATE - Library Adding Temporary Effects
 This Minetest library adds possibility to easily create temporary effects affecting players and mobs.
 
 **Version**: Alpha
