@@ -524,6 +524,8 @@ minetest.register_globalstep(function(dtime)
 
 					-- Effect ends ?
 					if effect.phase == phase_end then
+						-- Inform observers
+						late.trigger_event("on_effect_end", effect)
 						-- Delete effect
 						data.effects[index] = nil
 					end

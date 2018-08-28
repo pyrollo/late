@@ -20,7 +20,9 @@ late = {}
 late.name = minetest.get_current_modname()
 late.path = minetest.get_modpath(late.name)
 
+dofile(late.path.."/functions.lua")
 dofile(late.path.."/effects.lua")
+dofile(late.path.."/hud.lua")
 dofile(late.path.."/integration.lua")
 dofile(late.path.."/impacts.lua")
 dofile(late.path.."/basic_impacts.lua")
