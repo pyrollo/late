@@ -60,6 +60,10 @@ local function calliffunc(fct, ...)
 	end
 end
 
+local function nvl(var, val)
+	if var == nil then return val else return var end
+end
+
 -- Targets
 ----------
 
@@ -148,10 +152,10 @@ minetest.register_abm({
 		local ndef = minetest.registered_nodes[node.name]
 		local effect_def = ndef.effect_near
 
-		if effect_def and effect_def.distance then
+		if effect_def 	then
 
 			for _, target in pairs(minetest.get_objects_inside_radius(
-					pos, effect_def.distance)) do
+				pos, (effect_def.distance or 0) + (effect_def.spread or 0))) do
 
 				effect_def.id = 'near:'..node.name
 
@@ -219,7 +223,7 @@ function Effect:new(target, definition)
 
 	-- Default values
 	self.elapsed_time = self.elapsed_time or 0
-	self.intensity = self.intensity or 0
+	self.time_intensity = self.time_intensity or 0
 	self.phase = self.phase or phase_raise
 	self.target = target
 
@@ -348,44 +352,47 @@ function Effect:step(dtime)
 	-- Internal time
 	self.elapsed_time = self.elapsed_time + dtime
 
-	-- Effect conditions
-	if (self.phase == phase_raise or self.phase == phase_still) 
-		and not self:check_conditions() then
-		self:stop()
-	end
-
 	-- End effects that have no impact
-	if not next(self.impacts, nil) then
-		self.phase = phase_end
+	if not next(self.impacts, nil) then	self.phase = phase_end end
+
+	if (self.phase ~= phase_end) then
+		self:update_distance_intensity()
 	end
 
-	-- Phase management
+	-- Check effect conditions
+	if (self.phase == phase_raise or self.phase == phase_still)
+	   and not self:check_conditions() then self.phase = phase_fall end
+
+	-- Time intensity and phases
 	if self.phase == phase_raise then
-		if (self.raise or 0) > 0 then
-		self:change_intensity(self.intensity + dtime / self.raise)
-			if self.intensity >= 1 then self.phase = phase_still end
-		else
-			self.phase = phase_still
-		end
+		self.time_intensity = self.time_intensity
+			+ (self.raise and dtime/self.raise or 1)
+		if self.time_intensity >= 1 then self.phase = phase_still end
 	end
 
-	if self.phase == phase_still then self:change_intensity(1) end
+	if self.phase == phase_still then self.time_intensity = 1 end
 
 	if self.phase == phase_fall then
-		if (self.fall or 0) > 0 then
-			self:change_intensity(self.intensity - dtime / self.fall)
-			if self.intensity <= 0 then self.phase = phase_end end
-		else
-			self.phase = phase_end
-		end
+		self.time_intensity = self.time_intensity
+			- (self.fall and dtime/self.fall or 1)
+		if self.time_intensity <= 0 then self.phase = phase_end end
 	end
 
-	if self.phase == phase_end then self:change_intensity(0) end
+	if self.phase == phase_end then self.time_intensity = 0 end
+
+	-- Commpute total intensity
+	local intensity = nvl(self.time_intensity, 1) * nvl(self.distance_intensity, 1)
+
+	if intensity and data(self.target).modifiers then
+		for _, group in ipairs(self.groups) do
+			intensity = intensity * nvl(data(self.target).modifiers[group], 1)
+		end
+	end
 
 	-- Propagate to impacts (intensity and end)
 	for impact_name, impact in pairs(self.impacts) do
-		if impact.intensity ~= self.intensity then
-			impact.intensity = self.intensity
+		if impact.intensity ~= intensity then
+			impact.intensity = intensity
 			data(self.target).impacts[impact_name].changed = true
 		end
 		if self.phase == phase_end then
@@ -417,36 +424,35 @@ function late.is_equiped(target, item_name)
 	return false -- Item not found in equipment
 end
 
--- Is target near nodes?
--- This condition is not in the effect definition, it is created when needed
--- for effects associated with nodes placed on the map.
-function late.is_near_nodes(target, near_node)
-	-- No check, near_nodes should have radius, node_name and active_pos members
-	local target_pos = target:get_pos()
-	local radius2 = near_node.radius * near_node.radius
-	local pos
-	for hash, _ in pairs(near_node.active_pos) do
-		pos = minetest.get_position_from_hash(hash)
+-- Discard too far or not uptodate nodes from near_nodes list and compute min
+-- distance and intensity according to it
+function Effect:update_distance_intensity()
+	local distance, min_distance
 
-		if (pos.x - target_pos.x) * (pos.x - target_pos.x) +
-		   (pos.y - target_pos.y) * (pos.y - target_pos.y) +
-		   (pos.z - target_pos.z) * (pos.z - target_pos.z) > radius2
-		then
-			near_node.active_pos[hash] = nil
-		else
-			if minetest.get_node(pos).name ~= near_node.node_name then
-				near_node.active_pos[hash] = nil
-			end
+	if self.conditions and self.conditions.near_node then
+		for hash, _ in pairs(self.conditions.near_node.active_pos) do
+			local pos = minetest.get_position_from_hash(hash)
+			distance = vector.distance(self.target:get_pos(), pos)
+
+			if distance < (self.distance or 0) + (self.spread or 0) and
+			   minetest.get_node(pos).name ==
+			   (self.conditions.near_node.node_name or "")
+			then min_distance = math.min(min_distance or distance, distance)
+			else self.conditions.near_node.active_pos[hash] = nil end
 		end
 	end
 
-	return next(near_node.active_pos, nil) ~= nil
+	if min_distance == nil then self.distance_intensity = nil
+	else
+		self.distance_intensity = self.spread and math.min(1, ((self.distance
+			or 0) + self.spread - min_distance) / self.spread) or 1
+	end
 end
 
 -- Check if conditions on effect are all ok
 function Effect:check_conditions()
 	if not self.conditions then
-		return true -- no condition, always active (ex : poison)
+		return true -- no condition, permanent effect
 	end
 
 	-- Check effect duration
@@ -455,17 +461,14 @@ function Effect:check_conditions()
 		return false
 	end
 
-	-- Check equipment
-	if self.conditions.equiped_with and
-	   not late.is_equiped(self.target, self.conditions.equiped_with)
-	then
+	-- Check nearby nodes
+	if self.conditions.near_node and self.distance_intensity == nil	then
 		return false
 	end
 
-	-- Check nearby nodes
-	if self.conditions.near_node and
-	   not late.is_near_nodes(self.target, self.conditions.near_node)
-	then
+	-- Check equipment
+	if self.conditions.equiped_with and
+	   not late.is_equiped(self.target, self.conditions.equiped_with) then
 		return false
 	end
 

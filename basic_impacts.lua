@@ -16,6 +16,29 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+--- Effects
+-----------
+-- Alters effects by groups with an intensity multiplier
+-- Params: { group_name = intensity multiplier, .. }
+late.register_impact_type({'player', 'mob'}, 'effects', {
+    reset = function(impact)
+            late.get_storage_for_targert(impact.target).modifiers = nil
+        end,
+    update = function(impact)
+        data = late.get_storage_for_targert(impact.target)
+        data.modifiers = {}
+
+        for _, params in pairs(impact.params) do
+            for group, intensity in (impact.params) do
+                if group ~= 'intensity' then
+                    data.modifiers[group] = (data.modifiers[group] or 1)
+                        * (1 - (intensity + 1) * impact.intensity)
+                end
+            end
+        end
+    end,
+})
+
 -- Speed
 --------
 -- Params :
