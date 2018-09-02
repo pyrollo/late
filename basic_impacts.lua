@@ -146,6 +146,32 @@ late.register_impact_type({'player', 'mob'}, 'damage', {
 	end,
 })
 
+-- Breath
+---------
+-- Params :
+-- 1: Breath points gained (+) or lost (-) per period
+-- 2: Period length in seconds (default 1 second)
+-- TODO: Missing an impact preventing from breathing
+late.register_impact_type({'player'}, 'breath', {
+	step = function(impact, dtime)
+		for _, params in pairs(impact.params) do
+			params.timer = (params.timer or 0) + dtime
+			local times = math.floor(params.timer / (params[2] or 1))
+			if times > 0 then
+				params.timer = params.timer - times * (params[2] or 1)
+
+				local old = impact.target:get_breath()
+				local new = old + times * (params[1] or 0) * params.intensity
+
+				if new < 0 then new = 0 end
+				if new > 11 then new = 11 end
+				if new == 11 and old < 11 then new = 10 end
+				if new ~= old then impact.target:set_breath(new) end
+			end
+		end
+	end,
+})
+
 -- Daylight
 -----------
 -- Params :
