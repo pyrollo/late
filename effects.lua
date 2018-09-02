@@ -34,9 +34,6 @@ local abm_interval = 1
 -- Effect phases
 ----------------
 
-local phase_init = 0
--- Init phase, before effect starts (and enters raise phase)
-
 local phase_raise = 1
 -- Effects starts in this phase. It stops after effect.raise seconds or when
 -- effect conditions are no longer fulfilled. Intensity of effect grows from 0
@@ -329,8 +326,7 @@ end
 --- start
 -- Starts or restarts effect if it's in fall or end phase
 function Effect:start()
-	if self.phase == phase_init or
-	   self.phase == phase_fall or
+	if self.phase == phase_fall or
 	   self.phase == phase_end then
 		self.phase = phase_raise
 	end
@@ -353,8 +349,8 @@ function Effect:step(dtime)
 	self.elapsed_time = self.elapsed_time + dtime
 
 	-- Effect conditions
-	if (self.phase == phase_init or self.phase == phase_raise
-	   or self.phase == phase_still) and not self:check_conditions() then
+	if (self.phase == phase_raise or self.phase == phase_still) 
+		and not self:check_conditions() then
 		self:stop()
 	end
 
