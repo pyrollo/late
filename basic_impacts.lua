@@ -278,11 +278,34 @@ late.register_impact_type({'player', 'mob'}, 'texture', {
 		end,
 	})
 
+-- Nametag (WIP)
+----------
+-- Params:
+-- colorize - Colorize
+-- opacity - Opacity [0..1]
+-- TODO: Get real nametag color instead of white as default
+
+late.register_impact_type({'player', 'mob'}, 'nametag', {
+	reset = function(impact)
+			impact.target:set_nametag_attributes({color = "white"})
+		end,
+
+	update = function(impact)
+			local opacity = late.multiply_valints(
+				late.get_valints(impact.params,	"opacity"))
+			local color = late.superpose_color_valints(
+				late.get_valints(impact.params,	"colorize"), "white")
+			color.a = color.a * opacity
+			impact.target:set_nametag_attributes({color = color})
+		end,
+	})
+
 -- Vision (WIP)
 ---------
 -- Params :
 -- 1: Vision multiplier [0..1]. 0 = Blind, 1 and above = normal. Default: 1
 -- TODO: 2: Mask color (colorstring). Default "black".
+-- TODO: Definitely not working, too easy to disable by pressing F1
 
 late.register_impact_type('player', 'vision', {
 	vars = { hudid = nil },
