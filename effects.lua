@@ -384,7 +384,7 @@ function Effect:step(dtime)
 	local intensity = nvl(self.time_intensity, 1) * nvl(self.distance_intensity, 1)
 
 	if intensity and data(self.target).modifiers then
-		for _, group in ipairs(self.groups) do
+		for _, group in ipairs(self.groups or {}) do
 			intensity = intensity * nvl(data(self.target).modifiers[group], 1)
 		end
 	end
