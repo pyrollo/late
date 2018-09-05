@@ -1,3 +1,6 @@
+# To be updated
+Sorry, once again API.txt is not up to date anymore. Will be fixed soon. But most of the content is ok.
+
 # Introduction
 LATE is a library for managing lasting effects, not instant effects.
 
@@ -23,7 +26,7 @@ Once raise phase is completed, effects enters the *still* phase.
 Intensity is full and the phases lasts until one of the conditions stops being fulfilled.
 ### fall
 When conditions are no longer fulfilled, effect enters fall phase.  
-This phase lasts `fall` seconds (if 0, effects gets to *end* phase instantly). 
+This phase lasts `fall` seconds (if 0, effects gets to *end* phase instantly).
 ### end
 This is the terminal phase.  
 Effect will be deleted in next step.
@@ -37,7 +40,7 @@ Effect definition table may contain following fields:
   * `duration` Duration (in seconds) the effect lasts (default: always)
   * `distance` For effect associated to nodes, distance of action
   * `stop_on_death` If true, the effect stops at player death
-  
+
 All fields are optional but an effect without impacts would do nothing.
 
 Example of effect definition:
@@ -52,7 +55,7 @@ Example of effect definition:
 Of course, *jump* and *speed* impacts have to be defined (they are included in base impacts).
 
 ## How to affect effects?
- 
+
 ### With custom code
 To affect a target with an effect, create a new effect using `late.new_effect`, giving the target and the effect definition.
 Think about adding a `duration` or `stop_on_death` clause in effect definition to avoid permanent effect (unless expected).
@@ -78,11 +81,11 @@ To create an item that have an effect when equiped, add to the item definition a
 Example:
 ```lua
 -- Jump boots
-minetest.register_tool("mymod:jump_boots", { 
-    description = "Jump boots", 
+minetest.register_tool("mymod:jump_boots", {
+    description = "Jump boots",
 	inventory_image = "mymod_boots.png",
     effect_equip = { impacts = { jump=3 } },
-}) 
+})
 ```
 To make boots wearable as boots armor, refer to **3D Armor** mod API.
 
@@ -95,12 +98,12 @@ To create an item that have an effect when used:
 Example:
 ```lua
 -- Poison potion
-minetest.register_tool("mymod:poison", { 
-    description = "Poison potion", 
+minetest.register_tool("mymod:poison", {
+    description = "Poison potion",
 	inventory_image = "mymod_potion.png",
     effect_use = { impacts = { damage={ 1, 2 } }, stop_on_death=true },
     on_use = late.on_use_tool_callback,
-}) 
+})
 ```
 
 ### Placing nodes
@@ -118,7 +121,7 @@ minetest.register_node("mymod:dark_stone", {
 	tiles = {"default_stone.png"},
     groups = { cracky = 3, stone = 1, effect_trigger = 1 },
     effect_near = { impacts = { daylight=0 }, distance = 20 },
-}) 
+})
 ```
 
 ## Methods
@@ -126,7 +129,7 @@ minetest.register_node("mymod:dark_stone", {
 ```lua
 function late.get_effect_by_id(target, id)
 ```
-Retrieves an effect affecting a target by it's id. 
+Retrieves an effect affecting a target by it's id.
 
 `target`: Target of the effect.  
 `id`: Identifier of the effect to retrieve.
@@ -151,7 +154,7 @@ Public API :
 ```lua
 function late.new_effect(target, definition)
 ```
-Creates a new effect on a target. 
+Creates a new effect on a target.
 
 `target`: Target to be affected by the effect.  
 `definition`: Effect defintion table.
@@ -186,7 +189,7 @@ Stops an effect. Actually set it in *fall* phase, regardless of conditions.
 ```lua
 function Effect:change_intensity(intensity)
 ```
-Change intensity of effect. 
+Change intensity of effect.
 
 `intensity`: New intensity (between 0.0 and 1.0)
 
@@ -261,7 +264,7 @@ Registers a player impact type.
 Except variables in `vars`, nothing should be changed by the functions.
 
  # Impact Helpers
- 
+
 In following helpers, valint stands for a pair of value / intensity.
 
 Each effect corresponding to an impact gives one or more parameters to the impact and an effect intensity.
@@ -280,7 +283,7 @@ Impact params table contains params given by effects definition, plus an *intens
 
 ## append_valints
 ```lua
-function late.append_valints(valints, extravalints) 
+function late.append_valints(valints, extravalints)
 ```
 Appends a values and intensities list to another. Usefull to add extra values in further computation.
 
@@ -305,15 +308,15 @@ Returns the result of a sum of values with intensities
 
 ## mix_color_valints
 ```lua
-function late.mix_color_valints(valints) 
+function late.mix_color_valints(valints)
 ```
 Mix colors with intensity. Returns {r,g,b,a} table representing the resulting color.
 
-`valints` List of colorstrings (value=) and intensities 
+`valints` List of colorstrings (value=) and intensities
 
 ## color_to_table
 ```lua
-function late.color_to_table(colorspec) 
+function late.color_to_table(colorspec)
 ```
 Converts a colorspec to a {r,g,b,a} table. Returns the conversion result.
 
@@ -321,7 +324,7 @@ Converts a colorspec to a {r,g,b,a} table. Returns the conversion result.
 
 ## color_to_rgb_texture
 ```lua
-function late.color_to_rgb_texture(colorspec) 
+function late.color_to_rgb_texture(colorspec)
 ```
 Converts a colorspec to a "#RRGGBB" string ready to use in textures.
 
@@ -387,4 +390,3 @@ Location condition check. Can be overriden to extend or change location conditio
 
 `target`: Target to check location for  
 `near_node`: table defining location
-
