@@ -22,17 +22,17 @@
 -- Params: { group_name = intensity multiplier, .. }
 late.register_impact_type({'player', 'mob'}, 'effects', {
     reset = function(impact)
-            late.get_storage_for_targert(impact.target).modifiers = nil
+            late.get_storage_for_target(impact.target).modifiers = nil
         end,
     update = function(impact)
-        data = late.get_storage_for_targert(impact.target)
+        local data = late.get_storage_for_target(impact.target)
         data.modifiers = {}
 
         for _, params in pairs(impact.params) do
-            for group, intensity in (impact.params) do
+            for group, intensity in pairs(params) do
                 if group ~= 'intensity' then
                     data.modifiers[group] = (data.modifiers[group] or 1)
-                        * (1 - (intensity + 1) * impact.intensity)
+                        * (1 - (intensity + 1) * params.intensity)
                 end
             end
         end
@@ -115,7 +115,7 @@ late.register_impact_type('player', 'fly', {
 			if impact.vars.original_priv == nil then
 				impact.vars.original_priv = privs.fly or false
 			end
-			privs.fly = impact.vars.original_priv or 
+			privs.fly = impact.vars.original_priv or
 				late.multiply_valints(late.get_valints(impact.params, 1)) > 0.5
 				or false
 			minetest.set_player_privs(pname, privs)
@@ -217,7 +217,7 @@ late.register_impact_type('player', 'daylight', {
 -- Texture
 ----------
 -- Params:
--- colorize - Colorize 
+-- colorize - Colorize
 -- opacity - Opacity [0..1]
 
 late.register_impact_type({'player', 'mob'}, 'texture', {
@@ -225,7 +225,7 @@ late.register_impact_type({'player', 'mob'}, 'texture', {
 
 	reset = function(impact)
 			if impact.vars.initial_textures then
-				default.player_set_textures(impact.target, 
+				default.player_set_textures(impact.target,
 					impact.vars.initial_textures)
 				impact.vars.initial_textures = nil
 			end
@@ -248,7 +248,7 @@ late.register_impact_type({'player', 'mob'}, 'texture', {
 
 			local opacity = late.multiply_valints(
 				late.get_valints(impact.params, "opacity"))
-			
+
 			if opacity < 1 then
 				-- https://github.com/minetest/minetest/pull/7148
 				-- Alpha textures on entities to be released in Minetest 0.5
@@ -298,7 +298,7 @@ late.register_impact_type('player', 'vision', {
 			local text = "late_black_pixel.png^[colorize:#000000^[opacity:"..
 				math.ceil(255-vision*255)
 			if impact.vars.hudid then
-				impact.target:hud_change(impact.vars.hudid, 'text', text) 
+				impact.target:hud_change(impact.vars.hudid, 'text', text)
 			else
 				impact.vars.hudid = impact.target:hud_add({
 					hud_elem_type = "image",
@@ -310,5 +310,3 @@ late.register_impact_type('player', 'vision', {
 			end
 		end,
 })
-
-
