@@ -481,7 +481,7 @@ minetest.register_on_dieplayer(function(player)
 	local data = data(player)
 	if data then
 		for index, effect in pairs(data.effects) do
-			if effect.stopondeath then
+			if effect.stop_on_death then
 				effect:stop()
 			end
 		end
@@ -623,7 +623,7 @@ end
 minetest.after(save_interval, periodic_save)
 
 minetest.register_on_joinplayer(function(player)
---	deserialize_effects(player, player:get_attribute(save_meta_key))
+	deserialize_effects(player, player:get_attribute(save_meta_key))
 end)
 
 minetest.register_on_leaveplayer(function(player)
