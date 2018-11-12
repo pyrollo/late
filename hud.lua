@@ -38,7 +38,10 @@ local function get_hud_slot(effect)
 	local slot = 1
 	while data.huds[slot] do slot = slot + 1 end
 
-	data.huds[slot] = { effect = effect, offset = { x = -18, y = (slot-1) * 34 } }
+	data.huds[slot] = { effect = effect,
+	offset = {
+		x = hud_template.alignment.x * 18,
+		y = (slot-1) * 34 } }
 	return slot
 end
 
