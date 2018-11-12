@@ -68,14 +68,18 @@ local function hud_update(effect)
 
 	local texture
 
-	if effect.conditions and effect.conditions.duration
-	   and effect.conditions.duration > 0 then
-		local frame = math.floor(hud_template.max_anim * math.max(math.min(
-			effect.elapsed_time / effect.conditions.duration, 1),0))
-		texture = "late_hud_time.png^[verticalframe:"..hud_template.max_anim..
-			":"..frame
+	if effect.hud.duration ~= false then
+		if effect.conditions and effect.conditions.duration
+		   and effect.conditions.duration > 0 then
+			local frame = math.floor(hud_template.max_anim * math.max(math.min(
+				effect.elapsed_time / effect.conditions.duration, 1),0))
+			texture = "late_hud_time.png^[verticalframe:"..hud_template.max_anim..
+				":"..frame
+		else
+			texture = "late_hud_still.png"
+		end
 	else
-		texture = "late_hud_still.png"
+		texture = ""
 	end
 
 	local color = { r=0x7f, g=0x7f, b=0x7f }
