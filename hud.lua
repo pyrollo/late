@@ -106,6 +106,20 @@ local function hud_update(effect)
 				scale = { x = 1.7, y = 1.7 },
 			})
 		end
+		if effect.hud.label then
+			hud.ids.label = effect.target:hud_add({
+				hud_elem_type = "text", scale = {x=1, y=1},
+				position = hud_template.position,
+				alignment = hud_template.alignment,
+				offset = {
+					x=hud.offset.x + ( hud_template.alignment.x * 32 )
+					+ ( hud_template.alignment.x * 10 ),
+					y=hud.offset.y},
+				text = effect.hud.label,
+				number = "0xFFFFFF",
+				scale = { x = 1, y = 1 },
+			})
+		end
 	end
 
 	effect.target:hud_change(hud.ids.circle, "text", texture)
