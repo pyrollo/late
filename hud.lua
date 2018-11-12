@@ -17,9 +17,9 @@
 --]]
 
 local hud_update_period = 0.3
-local hud_template = { 
-	position = { x=1, y=0.2 }, 
-	alignment = { x=0, y=0 }, 
+local hud_template = {
+	position = { x=1, y=0.2 },
+	alignment = { x=-1, y=-1 },
 	max_anim = 25
 }
 
@@ -37,7 +37,7 @@ local function get_hud_slot(effect)
 	-- If not found, create new slot
 	local slot = 1
 	while data.huds[slot] do slot = slot + 1 end
-	
+
 	data.huds[slot] = { effect = effect, offset = { x = -18, y = (slot-1) * 34 } }
 	return slot
 end
@@ -90,7 +90,7 @@ local function hud_update(effect)
 		hud.ids = {}
 		hud.ids.circle = effect.target:hud_add({
 			hud_elem_type = "image", scale = {x=1, y=1},
-			position = hud_template.position, 
+			position = hud_template.position,
 			alignment = hud_template.alignment,
 			offset = hud.offset,
 			text = texture,
@@ -99,7 +99,7 @@ local function hud_update(effect)
 		if effect.hud.icon then
 			hud.ids.icon = effect.target:hud_add({
 				hud_elem_type = "image", scale = {x=1, y=1},
-				position = hud_template.position, 
+				position = hud_template.position,
 				alignment = hud_template.alignment,
 				offset = {x=hud.offset.x, y=hud.offset.y},
 				text = effect.hud.icon,
@@ -127,5 +127,3 @@ late.event_register("on_effect_end", function(effect)
 		hud_remove(effect)
 	end
 end)
-
-
