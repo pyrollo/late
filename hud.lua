@@ -102,7 +102,7 @@ local function hud_update(effect)
 				position = hud_template.position,
 				alignment = hud_template.alignment,
 				offset = {x=hud.offset.x, y=hud.offset.y},
-				text = effect.hud.icon,
+				text = effect.hud.icon.."^[resize:16x16",
 				scale = { x = 1.7, y = 1.7 },
 			})
 		end
