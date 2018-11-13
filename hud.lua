@@ -136,7 +136,7 @@ local function hud_update(effect)
 				offset = {
 					x=hud.offset.x + ( hud_template.alignment.x * 32 )
 					+ ( hud_template.alignment.x * 10 ),
-					y=hud.offset.y},
+					y=hud.offset.y + ( hud_template.alignment.y * 4 )},
 				text = effect.hud.label,
 				number = "0xFFFFFF",
 				scale = { x = 1, y = 1 },
