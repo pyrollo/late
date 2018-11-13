@@ -23,6 +23,18 @@ local hud_template = {
 	max_anim = 25
 }
 
+hud_template.position.x = tonumber(minetest.settings:get(
+"late.hud_template.position.x")) or hud_template.position.x
+
+hud_template.position.y = tonumber(minetest.settings:get(
+"late.hud_template.position.y")) or hud_template.position.y
+
+hud_template.alignment.x = tonumber(minetest.settings:get(
+"late.hud_template.alignment.x")) or hud_template.alignment.x
+
+hud_template.alignment.y = tonumber(minetest.settings:get(
+"late.hud_template.alignment.y")) or hud_template.alignment.y
+
 local function get_hud_slot(effect)
 	local data = late.get_storage_for_target(effect.target)
 
