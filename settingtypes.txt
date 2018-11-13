@@ -1,0 +1,4 @@
+late.hud_template.position.x (Horizontal position of HUD) float 1
+late.hud_template.position.y (Vertical position of HUD) float 0.2
+late.hud_template.alignment.x (Horizontal alignment of HUD) float -1
+late.hud_template.alignment.y (Vertical alignment of HUD) float -1
