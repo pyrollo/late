@@ -16,6 +16,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+-- Interval in seconds of ABM checking for targets being near nodes with effect
+-- TODO:Move into a mod settings
+local abm_interval = 1
+
 -- Conditions registry
 ----------------------
 
@@ -31,12 +35,12 @@ function late.get_condition_type(name)
 	return condition_types[name]
 end
 
-local call_condition_function(function_name, type_name, data, target, effect)
+local function call_condition_function(function_name, type_name, data, target, effect)
 	local condition_type = condition_types[type_name]
 	if condition_type and condition_type[function_name] and
-	   type(condition_type.[function_name]) == "function"
+	   type(condition_type[function_name]) == "function"
 	then
-		return condition_type[function_name](condition, target, effect)
+		return condition_type[function_name](data, target, effect)
 	else
 		return nil
 	end
@@ -114,7 +118,7 @@ minetest.register_abm({
 
 late.register_condition_type('near_node', {
 	check = function(data, target, effect)
-			return self.distance_intensity ~= nil
+			return effect.distance_intensity ~= nil
 		end,
 	step = function(data, target, effect)
 		-- Discard too far or not uptodate nodes from near_nodes list and compute min
@@ -129,7 +133,7 @@ late.register_condition_type('near_node', {
 				then
 					min_distance = math.min(min_distance or distance, distance)
 				else
-					data.active_pos[hash] = nil end
+					data.active_pos[hash] = nil
 				end
 			end
 

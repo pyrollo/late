@@ -28,10 +28,13 @@ if minetest.global_exists("armor") then
 	-- Extend equip condition to armors
 	late.register_condition_type('equiped_with', {
 		check = function(data, target, effect)
-			-- Is the target equiped with item_name?
-			-- Check wielded item
+				-- Is the target equiped with item_name?
+				-- Check wielded item
+				local item_name = data or ""
 				local stack = target:get_wielded_item()
-				if stack and stack:get_name() == data then return true end
+				if stack and stack:get_name() == item_name then
+					return true
+				end
 
 				-- Check only for players
 				if target.is_player and target:is_player() then
@@ -41,7 +44,9 @@ if minetest.global_exists("armor") then
 						local list = inv:get_list("armor")
 						if list then
 							for _, stack in pairs(list) do
-								if stack:get_name() == item_name then return true end
+								if stack:get_name() == item_name then
+									return true
+								end
 							end
 						end
 					end

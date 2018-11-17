@@ -27,10 +27,6 @@ local save_meta_key = "late:active_effects"
 -- TODO:Move into a mod settings
 local save_interval = 1
 
--- Interval in seconds of ABM checking for targets being near nodes with effect
--- TODO:Move into a mod settings
-local abm_interval = 1
-
 -- Effect phases
 ----------------
 
@@ -312,7 +308,7 @@ function Effect:step(dtime)
 
 	-- If not in end phase, do steps in each conditions
 	if (self.phase ~= phase_end) then
-		for key, value in self.conditions do
+		for key, value in pairs(self.conditions) do
 			late.condition_step(key, value, self.target, self)
 		end
 	end
@@ -320,9 +316,10 @@ function Effect:step(dtime)
 	-- Check effect conditions
 	if (self.phase == phase_raise or self.phase == phase_still)
 	then
-		for key, value in self.conditions do
+		for key, value in pairs(self.conditions) do
 			if not late.condition_check(key, value, self.target, self) then
-				return self.phase = phase_fall
+				self.phase = phase_fall
+				break
 			end
 		end
 	end
