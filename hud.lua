@@ -20,6 +20,8 @@ local hud_update_period = 0.3
 local hud_template = {
 	position = { x=1, y=0.2 },
 	alignment = { x=-1, y=-1 },
+	offset = { x = 18, y = 34},
+	icon_scale = 1.7,
 	max_anim = 25
 }
 
@@ -34,6 +36,15 @@ hud_template.alignment.x = tonumber(minetest.settings:get(
 
 hud_template.alignment.y = tonumber(minetest.settings:get(
 "late.hud_template.alignment.y")) or hud_template.alignment.y
+
+hud_template.icon_scale = tonumber(minetest.settings:get(
+"late.hud_template.icon_scale")) or hud_template.icon_scale
+
+hud_template.offset.x = tonumber(minetest.settings:get(
+"late.hud_template.offset.x")) or hud_template.offset.x
+
+hud_template.offset.y = tonumber(minetest.settings:get(
+"late.hud_template.offset.y")) or hud_template.offset.y
 
 local function get_hud_slot(effect)
 	local data = late.get_storage_for_target(effect.target)
@@ -52,8 +63,8 @@ local function get_hud_slot(effect)
 
 	data.huds[slot] = { effect = effect,
 	offset = {
-		x = hud_template.alignment.x * 18,
-		y = (slot-1) * 34 } }
+		x = hud_template.alignment.x * hud_template.offset.x,
+		y = (slot-1) * hud_template.offset.y } }
 	return slot
 end
 
@@ -102,8 +113,7 @@ local function hud_update(effect)
 		color = late.color_to_table(effect.hud.color)
 	end
 	color.a = 0x80
-	texture = texture.."^[colorize:"
-			..late.color_to_rgba_texture(color)
+	texture = texture.."^[colorize:"..late.color_to_rgba_texture(color)
 
 	if not hud.ids then
 		hud.ids = {}
@@ -125,7 +135,7 @@ local function hud_update(effect)
 					y = hud.offset.y + hud_template.alignment.y * 3,
 				},
 				text = effect.hud.icon.."^[resize:16x16",
-				scale = { x = 1.7, y = 1.7 },
+				scale = { x = hud_template.icon_scale, y = hud_template.icon_scale },
 			})
 		end
 		if effect.hud.label then
@@ -134,9 +144,10 @@ local function hud_update(effect)
 				position = hud_template.position,
 				alignment = hud_template.alignment,
 				offset = {
-					x=hud.offset.x + ( hud_template.alignment.x * 32 )
-					+ ( hud_template.alignment.x * 10 ),
-					y=hud.offset.y + ( hud_template.alignment.y * 4 )},
+					x=hud.offset.x + ( hud_template.alignment.x
+						* (hud_template.icon_scale * 16) ) + ( hud_template.alignment.x * 10 ),
+					y=hud.offset.y + hud_template.alignment.y * 4
+				},
 				text = effect.hud.label,
 				number = "0xFFFFFF",
 				scale = { x = 1, y = 1 },

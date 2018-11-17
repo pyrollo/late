@@ -2,3 +2,6 @@ late.hud_template.position.x (Horizontal position of HUD) float 1
 late.hud_template.position.y (Vertical position of HUD) float 0.2
 late.hud_template.alignment.x (Horizontal alignment of HUD) float -1
 late.hud_template.alignment.y (Vertical alignment of HUD) float -1
+late.hud_template.icon_scale = 2 (Scale factor of 16px effect icon) float 1.7
+late.hud_template.offset.x = 20 (Horizontal offset of effect) int 18
+late.hud_template.offset.y = 42 (Vertical offset of effect) int 34
