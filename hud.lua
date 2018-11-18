@@ -26,25 +26,25 @@ local hud_template = {
 }
 
 hud_template.position.x = tonumber(minetest.settings:get(
-"late.hud_template.position.x")) or hud_template.position.x
+"late.hud.position.x")) or hud_template.position.x
 
 hud_template.position.y = tonumber(minetest.settings:get(
-"late.hud_template.position.y")) or hud_template.position.y
+"late.hud.position.y")) or hud_template.position.y
 
 hud_template.alignment.x = tonumber(minetest.settings:get(
-"late.hud_template.alignment.x")) or hud_template.alignment.x
+"late.hud.alignment.x")) or hud_template.alignment.x
 
 hud_template.alignment.y = tonumber(minetest.settings:get(
-"late.hud_template.alignment.y")) or hud_template.alignment.y
+"late.hud.alignment.y")) or hud_template.alignment.y
 
 hud_template.icon_scale = tonumber(minetest.settings:get(
-"late.hud_template.icon_scale")) or hud_template.icon_scale
+"late.hud.icon_scale")) or hud_template.icon_scale
 
 hud_template.offset.x = tonumber(minetest.settings:get(
-"late.hud_template.offset.x")) or hud_template.offset.x
+"late.hud.offset.x")) or hud_template.offset.x
 
 hud_template.offset.y = tonumber(minetest.settings:get(
-"late.hud_template.offset.y")) or hud_template.offset.y
+"late.hud.offset.y")) or hud_template.offset.y
 
 local function get_hud_slot(effect)
 	local data = late.get_storage_for_target(effect.target)
