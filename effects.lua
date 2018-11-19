@@ -327,6 +327,18 @@ function Effect:stop()
 	end
 end
 
+-- Expose stop method to API
+function late.stop_effect(target, id)
+	local data = data(target)
+	if data then
+		for index, effect in pairs(data.effects) do
+			if effect.id == id then
+				effect:stop()
+			end
+		end
+	end
+end
+
 --- start
 -- Starts or restarts effect if it's in fall or end phase
 function Effect:start()
