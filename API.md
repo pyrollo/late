@@ -1,6 +1,3 @@
-# To be updated
-Sorry, once again API.txt is not up to date anymore. Will be fixed soon. But most of the content is ok.
-
 # Introduction
 LATE is a library for managing lasting effects, not instant effects.
 
@@ -235,12 +232,6 @@ function Effect:step(dtime)
 Performs a step calculation of effect.
 `dtime`: Time since last step.
 
-#### check\_conditions
-```lua
-function Effect:check_conditions()
-```
-Check effects conditions are still fulfilled. Returns true or false.
-
 # Conditions registration
 ## register\_condition\_type
 ```lua
@@ -255,11 +246,11 @@ Registering new condition types allows to extend the available types of conditio
 
 ### Condition definition table
 `definition` table may contain following fields:
-  * `check` = function(data, target, effect) A function called to check is a condition is fulfilled. Should return true if condition still fulfilled, false otherwise. This function is not called at each step, only when engine needs it. Function parameters:
+  * `check` (optional) = function(data, target, effect) A function called to check is a condition is fulfilled. Should return true if condition still fulfilled, false otherwise. This function is not called at each step, only when engine needs it. Function parameters:
     * `data`: effect data
     * `target`: target affected,
     * `effect`: Effect object instance.
-  * `step` = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
+  * `step` (optional) = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
 
 # Impacts registration
 ## register\_player\_impact\_type
@@ -332,6 +323,22 @@ Returns the result of a sum of values with intensities
 
 `valints`: Value/Intensity list
 
+## superpose_valints
+```lua
+function late.superpose_valints(valints, base_value)
+```
+Returns a ratio superposition (like if each ratio was a greyscale value and intensities where alpha chanel).
+`valints` Value/Intensity list of ratios (values should go from 0 to 1)  
+`base_value` Base ratio value on which valints are superposed  
+
+## superpose_color_valints
+```lua
+function late.superpose_color_valints(valints, background_color)
+```
+Returns a color superposition with alpha channel and intensity (actually, intensity is considered as a factor on alpha channel)
+`valints` Value/Intensity list of colors  
+`background_color` Background color (default none)
+
 ## mix_color_valints
 ```lua
 function late.mix_color_valints(valints)
@@ -378,16 +385,7 @@ late.register_player_impact_type('speed', {
 ```
 
 # More internal stuff
-## Debug
-### dump_effects
-```lua
-function late.dump_effects(player_name)
-```
-Returns a string containing a dump of all effects affecting *player_name* player. For debug purpose.
-
-
-## Ohter stuff
-### get_storage_for_target
+## get_storage_for_target
 ```lua
 late.get_storage_for_target(target)
 ```
@@ -396,23 +394,3 @@ Retrieves or create the effects_api storage for a target.
 `target`: Target
 
 Returns storage associated with the target or `nil` if target not suitable.
-
-### is_equiped
-```lua
-late.is_equiped(target, item_name)
-```
-Equipment condition check. Can be overriden to extend equipment to other than wielded item (done in 3D Armor integration).
-
-`target`: Target to check equipment for  
-`item_name`: Name of the item that should equip the target
-
-Returns true or false whether target equiped with item or not.
-
-### is_near_nodes
-```lua
-late.is_near_nodes(target, near_node)
-```
-Location condition check. Can be overriden to extend or change location condition.
-
-`target`: Target to check location for  
-`near_node`: table defining location
