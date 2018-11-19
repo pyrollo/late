@@ -37,13 +37,19 @@ Effect definition table may contain following fields:
   * `impacts` Impacts effect has (pair of impact name / impact parameters);
   * `raise` Time (in seconds) it takes to raise to full intensity (default 0: immediate);
   * `fall` Time (in seconds) it takes to fall, after end to no intensity (default 0: immediate);
-  * `duration` Duration (in seconds) the effect lasts (default: always)
-  * `distance` For effect associated to nodes, distance of action
-  * `stop_on_death` If true, the effect stops at player death
+  * `duration` Duration (in seconds) the effect lasts (default: always);
+  * `distance` For effect associated to nodes, distance of action;
+  * `stop_on_death` If true, the effect stops at player death;
+	* `hud` Hud defition (see Hud section);
 
 All fields are optional but an effect without impacts would do nothing.
 
-Example of effect definition:
+### Hud definition table
+Hud definition table (hud field of effect definition) may contain following fields:
+  * `icon` Texture used to display effect in hud;
+	* `color` Color of the hud background;
+
+### Example of effect definition
 ```lua
 -- Run fast and make high jumps for 20 seconds
 {
