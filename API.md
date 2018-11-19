@@ -40,14 +40,14 @@ Effect definition table may contain following fields:
   * `duration` Duration (in seconds) the effect lasts (default: always);
   * `distance` For effect associated to nodes, distance of action;
   * `stop_on_death` If true, the effect stops at player death;
-	* `hud` Hud defition (see Hud section);
+  * `hud` Hud defition (see Hud definition table section);
 
 All fields are optional but an effect without impacts would do nothing.
 
 ### Hud definition table
 Hud definition table (hud field of effect definition) may contain following fields:
   * `icon` Texture used to display effect in hud;
-	* `color` Color of the hud background;
+  * `color` Color of the hud background;
 
 ### Example of effect definition
 ```lua
@@ -241,12 +241,32 @@ function Effect:check_conditions()
 ```
 Check effects conditions are still fulfilled. Returns true or false.
 
+# Conditions registration
+## register\_condition\_type
+```lua
+function late.register_condition_type(name, definition)
+```
+Registers a condition type.
+Conditions are checked each step to determine if the effect should last or stop.
+Registering new condition types allows to extend the available types of conditions.
+
+`name`: Name of the condition type.  
+`definition`: Definition table of the condition type.  
+
+### Condition definition table
+`definition` table may contain following fields:
+  * `check` = function(data, target, effect) A function called to check is a condition is fulfilled. Should return true if condition still fulfilled, false otherwise. This function is not called at each step, only when engine needs it. Function parameters:
+    * `data`: effect data
+    * `target`: target affected,
+    * `effect`: Effect object instance.
+  * `step` = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
+
 # Impacts registration
 ## register\_player\_impact\_type
 ```lua
 function late.register_player_impact_type(target_types, name, definition)
 ```
-Registers a player impact type.
+Registers an impact type.
 
 `target_types`: Target type or table of target types that can be affected by that impact type  
 `name`: Name of the impact type  
