@@ -27,10 +27,6 @@ local save_meta_key = "late:active_effects"
 -- TODO:Move into a mod settings
 local save_interval = 1
 
--- Interval in seconds of ABM checking for targets being near nodes with effect
--- TODO:Move into a mod settings
-local abm_interval = 1
-
 -- Effect phases
 ----------------
 
@@ -104,6 +100,7 @@ late.get_storage_for_target = data
 
 -- Item effects
 ---------------
+-- TODO: To be moved ?
 
 function late.set_equip_effect(target, item_name)
 	local definition = minetest.registered_items[item_name] and
@@ -135,52 +132,6 @@ function late.on_use_tool_callback(itemstack, user, pointed_thing)
 		end
 	end
 end
-
--- Node effects
----------------
-
--- ABM to detect if player gets nearby a nodes with effect (belonging to
--- group:effect_trigger and having an effect in node definition)
-
-minetest.register_abm({
-	label = "late player detection",
-	nodenames="group:effect_trigger",
-	interval=abm_interval,
-	chance=1,
-	catch_up=true,
-	action = function(pos, node)
-		local ndef = minetest.registered_nodes[node.name]
-		local effect_def = ndef.effect_near
-
-		if effect_def 	then
-
-			for _, target in pairs(minetest.get_objects_inside_radius(
-				pos, (effect_def.distance or 0) + (effect_def.spread or 0))) do
-
-				effect_def.id = 'near:'..node.name
-
-				local effect = late.get_effect_by_id(target, effect_def.id)
-
-				if effect == nil then
-					effect = late.new_effect(target, effect_def)
-					if effect == nil then return end
-					effect:set_conditions({ near_node = {
-						node_name = node.name,
-						radius = effect_def.distance,
-						active_pos = {}
-					} } )
-				end
-
-				-- Register node position as an active position
-				effect.conditions.near_node
-					.active_pos[minetest.hash_node_position(pos)] = true
-
-				-- Restart effect in case it was in fall phase
-				effect:restart()
-			end
-		end
-	end,
-})
 
 -- Effect object
 ----------------
@@ -355,13 +306,23 @@ function Effect:step(dtime)
 	-- End effects that have no impact
 	if not next(self.impacts, nil) then	self.phase = phase_end end
 
+	-- If not in end phase, do steps in each conditions
 	if (self.phase ~= phase_end) then
-		self:update_distance_intensity()
+		for key, value in pairs(self.conditions) do
+			late.condition_step(key, value, self.target, self)
+		end
 	end
 
 	-- Check effect conditions
 	if (self.phase == phase_raise or self.phase == phase_still)
-	   and not self:check_conditions() then self.phase = phase_fall end
+	then
+		for key, value in pairs(self.conditions) do
+			if not late.condition_check(key, value, self.target, self) then
+				self.phase = phase_fall
+				break
+			end
+		end
+	end
 
 	-- Time intensity and phases
 	if self.phase == phase_raise then
@@ -401,9 +362,6 @@ function Effect:step(dtime)
 	end
 end
 
--- Effect conditions check
---------------------------
-
 --- set_conditions
 -- Add or replace conditions on the effect.
 -- @param conditions A table of key/values describing the conditions
@@ -414,67 +372,7 @@ function Effect:set_conditions(conditions)
 	end
 end
 
--- Is the target equiped with item_name?
-function late.is_equiped(target, item_name)
-	-- Check wielded item
-	local stack = target:get_wielded_item()
-	if stack and stack:get_name() == item_name then
-		return true
-	end
-	return false -- Item not found in equipment
-end
 
--- Discard too far or not uptodate nodes from near_nodes list and compute min
--- distance and intensity according to it
-function Effect:update_distance_intensity()
-	local distance, min_distance
-
-	if self.conditions and self.conditions.near_node then
-		for hash, _ in pairs(self.conditions.near_node.active_pos) do
-			local pos = minetest.get_position_from_hash(hash)
-			distance = vector.distance(self.target:get_pos(), pos)
-
-			if distance < (self.distance or 0) + (self.spread or 0) and
-			   minetest.get_node(pos).name ==
-			   (self.conditions.near_node.node_name or "")
-			then min_distance = math.min(min_distance or distance, distance)
-			else self.conditions.near_node.active_pos[hash] = nil end
-		end
-	end
-
-	if min_distance == nil then self.distance_intensity = nil
-	else
-		self.distance_intensity = self.spread and math.min(1, ((self.distance
-			or 0) + self.spread - min_distance) / self.spread) or 1
-	end
-end
-
--- Check if conditions on effect are all ok
-function Effect:check_conditions()
-	if not self.conditions then
-		return true -- no condition, permanent effect
-	end
-
-	-- Check effect duration
-	if self.conditions.duration ~= nil
-	   and self.elapsed_time > self.conditions.duration then
-		return false
-	end
-
-	-- Check nearby nodes
-	if self.conditions.near_node and self.distance_intensity == nil	then
-		return false
-	end
-
-	-- Check equipment
-	if self.conditions.equiped_with and
-	   not late.is_equiped(self.target, self.conditions.equiped_with) then
-		return false
-	end
-
-	-- All conditions fulfilled
-	return true
-end
 
 -- On die player : stop effects that are marked stopondeath = true
 minetest.register_on_dieplayer(function(player)
