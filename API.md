@@ -247,7 +247,7 @@ Registering new condition types allows to extend the available types of conditio
 ### Condition definition table
 `definition` table may contain following fields:
   * `check` (optional) = function(data, target, effect) A function called to check is a condition is fulfilled. Should return true if condition still fulfilled, false otherwise. This function is not called at each step, only when engine needs it. Function parameters:
-    * `data`: effect data
+    * `data`: condition data (value of this condition field in effect definition)
     * `target`: target affected,
     * `effect`: Effect object instance.
   * `step` (optional) = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
