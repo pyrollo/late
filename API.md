@@ -45,6 +45,8 @@ All fields are optional but an effect without impacts would do nothing.
 Hud definition table (hud field of effect definition) may contain following fields:
   * `icon` Texture used to display effect in hud;
   * `color` Color of the hud background;
+  * `label` Text to be displayed;
+  * `duration` Set to false to hide duration (default true);
 
 ### Example of effect definition
 ```lua
@@ -52,7 +54,8 @@ Hud definition table (hud field of effect definition) may contain following fiel
 {
     impacts = { jump=3, speed=10 },
     fall = 2,
-    duration = 20
+    duration = 20,
+	hud = { color="yellow", label ="Jump fast!" },
 }
 ```
 Of course, *jump* and *speed* impacts have to be defined (they are included in base impacts).

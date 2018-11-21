@@ -13,7 +13,7 @@ This library does not directly offer anything new to the game. It has to be used
 
 ## Related mods
 
-  * [late_demo](https://github.com/pyrollo/late_demo): A basic demo mod.
+  * [late_demo](https://github.com/pyrollo/late_demo): A basic demo mod ([impacts documented here](https://github.com/pyrollo/late/blob/master/basic_impacts.md)).
   * [late_extra_impacts](https://github.com/pyrollo/late_extra_impacts): Adds more elaborated impacts (only *illuminate* impact for now)
 
 ## Expected improvements
@@ -24,14 +24,18 @@ This library does not directly offer anything new to the game. It has to be used
   * Several effects on items and nodes
   * More impact types, on mobs in particular
 
-### Long tern
+### Long term
 
   * Effects on world itself
   * Persistance of effects on mobs (now only player effects persist)
-  * Conditions registration
   * Particles
 
 ## Version history
+
+### 2018-11-21 Hud improvements by texmex
+
+  * HUD system improved, added to demo and documentation
+  * Custom conditions can now be registered
 
 ### 2018-08-05 Ongoing development
 
