@@ -1,0 +1,7 @@
+late.hud.position.x (Horizontal position of HUD) float 1
+late.hud.position.y (Vertical position of HUD) float 0.2
+late.hud.alignment.x (Horizontal alignment of HUD) float -1
+late.hud.alignment.y (Vertical alignment of HUD) float -1
+late.hud.icon_scale (Scale factor of 16px effect icon) float 1.7
+late.hud.offset.x (Horizontal offset of effect) int 18
+late.hud.offset.y (Vertical offset of effect) int 34
