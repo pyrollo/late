@@ -13,7 +13,7 @@ This library does not directly offer anything new to the game. It has to be used
 
 ## Related mods
 
-  * [late_demo](https://github.com/pyrollo/late_demo): A basic demo mod ([impacts documented here](https://github.com/pyrollo/late/blob/master/basic_impacts.md)).
+  * [late_demo](https://github.com/pyrollo/late_demo): A basic demo mod ([impacts documented here](basic_impacts.md)).
   * [late_extra_impacts](https://github.com/pyrollo/late_extra_impacts): Adds more elaborated impacts (only *illuminate* impact for now)
 
 ## Expected improvements
