@@ -256,9 +256,9 @@ Registering new condition types allows to extend the available types of conditio
   * `step` (optional) = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
 
 # Impacts registration
-## register\_player\_impact\_type
+## register\_impact\_type
 ```lua
-function late.register_player_impact_type(target_types, name, definition)
+function late.register_impact_type(target_types, name, definition)
 ```
 Registers an impact type.
 
@@ -268,9 +268,9 @@ Registers an impact type.
 
 ### Impact definition table
 `definition` table may contain following fields:
-  * `vars`Internal variables needed by the impact (variables will instantiated for each player) (optional);
-  * `reset` (optional) = function(impact) Function called when impact stops to reset normal player state (optional);
-  * `update` (optional) = function(impact) Function called when impact changes to apply impact on player;
+  * `vars`Internal variables needed by the impact (variables will instantiated for each target) (optional);
+  * `reset` (optional) = function(impact) Function called when impact stops to reset normal target state (optional);
+  * `update` (optional) = function(impact) Function called when impact changes to apply impact on target;
   * `step` (optional) = function(impact, dtime) Function called every global step (optional);
 
 ### Impact instance table
@@ -368,22 +368,22 @@ Converts a colorspec to a "#RRGGBB" string ready to use in textures.
 
 ## Full example of impact type creation
 ```lua
--- Impacts on player speed
--- Params:
+-- Impact on player speed
+-- Params :
 -- 1: Speed multiplier [0..infinite]. Default: 1
-late.register_player_impact_type('speed', {
-    -- Reset function basically resets target speed to default value
-    reset = function(impact)
-            impact.player:set_physics_override({speed = 1.0})
-        end,
-    -- Main function actually coding the impact
-    update = function(impact)
-        -- Use multiply_valints and get_valints to perform parameter and intensity mixing between all effects
-        impact.player:set_physics_override({speed =
-            speed = late.multiply_valints(
-                late.get_valints(impact.params, 1))
-        })
-    end,
+
+late.register_impact_type('player', 'speed', {
+	-- Reset function basically resets target speed to default value
+	reset = function(impact)
+			minetest.set_physics_override(impact.target, {speed = 1.0})
+		end,
+	-- Main function actually coding the impact		
+	update = function(impact)
+			minetest.set_physics_override(impact.target, {
+				speed = late.multiply_valints(
+					late.get_valints(impact.params, 1))
+			})
+		end,
 })
 ```
 
