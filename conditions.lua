@@ -85,32 +85,33 @@ minetest.register_abm({
 	action = function(pos, node)
 		local ndef = minetest.registered_nodes[node.name]
 		local effect_def = ndef.effect_near
-
 		if effect_def then
 			for _, target in pairs(minetest.get_objects_inside_radius(
 				pos, (effect_def.distance or 0) + (effect_def.spread or 0))) do
-
 				effect_def.id = 'near:'..node.name
 
 				local effect = late.get_effect_by_id(target, effect_def.id)
 
 				if effect == nil then
 					effect = late.new_effect(target, effect_def)
-					if effect == nil then return end
-					effect:set_conditions({ near_node = {
-						node_name = node.name,
-						radius = effect_def.distance,
-						spread = effect_def.spread,
-						active_pos = {}
-					} } )
+					if effect then
+						effect:set_conditions({ near_node = {
+							node_name = node.name,
+							radius = effect_def.distance,
+							spread = effect_def.spread,
+							active_pos = {}
+						} } )
+					end
 				end
 
-				-- Register node position as an active position
-				effect.conditions.near_node
-					.active_pos[minetest.hash_node_position(pos)] = true
+				if effect then
+					-- Register node position as an active position
+					effect.conditions.near_node
+						.active_pos[minetest.hash_node_position(pos)] = true
 
-				-- Restart effect in case it was in fall phase
-				effect:restart()
+					-- Restart effect in case it was in fall phase
+					effect:restart()
+				end
 			end
 		end
 	end,
