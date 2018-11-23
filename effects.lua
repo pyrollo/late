@@ -308,7 +308,7 @@ function Effect:step(dtime)
 
 	-- If not in end phase, do steps in each conditions
 	if (self.phase ~= phase_end) then
-		for key, value in pairs(self.conditions) do
+		for key, value in pairs(self.conditions or {}) do
 			late.condition_step(key, value, self.target, self)
 		end
 	end
@@ -316,7 +316,7 @@ function Effect:step(dtime)
 	-- Check effect conditions
 	if (self.phase == phase_raise or self.phase == phase_still)
 	then
-		for key, value in pairs(self.conditions) do
+		for key, value in pairs(self.conditions or {}) do
 			if not late.condition_check(key, value, self.target, self) then
 				self.phase = phase_fall
 				break
