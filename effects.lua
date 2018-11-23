@@ -67,29 +67,28 @@ local target_data = {}
 -- Automatically clean unused data by using a weak key table
 setmetatable(target_data, {__mode = "k"})
 
--- Return data storage for target
+-- Return data storage for target (nil for inapropriate targets)
 local function data(target)
-	if target_data[target] then return target_data[target] end
-
-	-- Create a data entry for new target
-	local target_type, target_desc
-
-	if target.is_player and target:is_player() then
-		target_type = 'player'
-		target_desc = 'Player "'..target:get_player_name()..'"'
-	elseif target.get_luaentity then
-		local entity = target:get_luaentity()
-		if entity and entity.type then
-			target_type = 'mob'
-			target_desc = 'Mob "'..entity.name..'"'
-		end
+	if target_data[target] then
+		return target_data[target]
 	end
 
-	if target_type then
+	-- Try to create a data entry for new target
+	if minetest.is_player(target) then
 		target_data[target] = {
-			effects={}, impacts={},
-			type = target_type, string = target_desc,
-			defaults = {} }
+			effects={}, impacts={}, type = 'player',
+			string = string.format('Player "%s"', target:get_player_name())
+		}
+	elseif target.get_luaentity then
+		local entity = target:get_luaentity()
+
+		-- Mobs
+		if entity and entity.type then
+			target_data[target] = {
+				effects={}, impacts={},	type = 'mob',
+				string = string.format('Mob "%s"', entity.name)
+			}
+		end
 	end
 
 	return target_data[target]
