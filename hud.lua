@@ -18,9 +18,10 @@
 
 local hud_update_period = 0.3
 local hud_template = {
-	position = { x=0, y=0.8 },
-	alignment = { x=1, y=-1 },
-	offset = { x = 18, y = 34},
+	position = { x=1, y=0.2 },
+	alignment = { x=-1, y=1 },
+	offset = { x = 18, y = 18},
+	spacing = 34,
 	icon_scale = 1.7,
 	max_anim = 25
 }
@@ -37,14 +38,17 @@ hud_template.alignment.x = tonumber(minetest.settings:get(
 hud_template.alignment.y = tonumber(minetest.settings:get(
 "late.hud.alignment.y")) or hud_template.alignment.y
 
-hud_template.icon_scale = tonumber(minetest.settings:get(
-"late.hud.icon_scale")) or hud_template.icon_scale
-
 hud_template.offset.x = tonumber(minetest.settings:get(
 "late.hud.offset.x")) or hud_template.offset.x
 
 hud_template.offset.y = tonumber(minetest.settings:get(
 "late.hud.offset.y")) or hud_template.offset.y
+
+hud_template.spacing = tonumber(minetest.settings:get(
+"late.hud.spacing")) or hud_template.spacing
+
+hud_template.icon_scale = tonumber(minetest.settings:get(
+"late.hud.icon_scale")) or hud_template.icon_scale
 
 local function get_hud_slot(effect)
 	local data = late.get_storage_for_target(effect.target)
@@ -61,10 +65,14 @@ local function get_hud_slot(effect)
 	local slot = 1
 	while data.huds[slot] do slot = slot + 1 end
 
-	data.huds[slot] = { effect = effect,
-	offset = {
-		x = hud_template.alignment.x * hud_template.offset.x,
-		y = hud_template.alignment.y * (slot-1) * hud_template.offset.y } }
+	data.huds[slot] = {
+		effect = effect,
+		offset = {
+			x = hud_template.alignment.x * hud_template.offset.x,
+			y = hud_template.alignment.y * ( hud_template.offset.y + (slot-1)
+				* (hud_template.spacing + hud_template.icon_scale * 16))
+		}
+	}
 	return slot
 end
 
