@@ -18,8 +18,8 @@
 
 local hud_update_period = 0.3
 local hud_template = {
-	position = { x=1, y=0.2 },
-	alignment = { x=-1, y=-1 },
+	position = { x=0, y=0.8 },
+	alignment = { x=1, y=-1 },
 	offset = { x = 18, y = 34},
 	icon_scale = 1.7,
 	max_anim = 25
@@ -64,7 +64,7 @@ local function get_hud_slot(effect)
 	data.huds[slot] = { effect = effect,
 	offset = {
 		x = hud_template.alignment.x * hud_template.offset.x,
-		y = (slot-1) * hud_template.offset.y } }
+		y = hud_template.alignment.y * (slot-1) * hud_template.offset.y } }
 	return slot
 end
 
