@@ -64,7 +64,7 @@ local function get_hud_slot(effect)
 	data.huds[slot] = { effect = effect,
 	offset = {
 		x = hud_template.alignment.x * hud_template.offset.x,
-		y = (slot-1) * hud_template.offset.y } }
+		y = hud_template.alignment.y * (slot-1) * hud_template.offset.y } }
 	return slot
 end
 
