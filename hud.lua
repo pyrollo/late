@@ -70,7 +70,7 @@ local function get_hud_slot(effect)
 		offset = {
 			x = hud_template.alignment.x * hud_template.offset.x,
 			y = hud_template.alignment.y * ( hud_template.offset.y + (slot-1)
-				* hud_template.spacing )
+				* (hud_template.spacing + hud_template.icon_scale * 16))
 		}
 	}
 	return slot
