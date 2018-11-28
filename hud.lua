@@ -113,7 +113,7 @@ local function hud_update(effect)
 			texture = "late_hud_still.png"
 		end
 	else
-		texture = ""
+		texture = "blank.png"
 	end
 
 	local color = { r=0x7f, g=0x7f, b=0x7f }
