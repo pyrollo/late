@@ -4,5 +4,5 @@ late.hud.alignment.x (Horizontal alignment of HUD) float -1
 late.hud.alignment.y (Vertical alignment of HUD) float 1
 late.hud.offset.x (Horizontal offset of HUD) int 18
 late.hud.offset.y (Vertical offset of HUD) int 18
-late.hud.spacing (Size of space between effects) 34
+late.hud.spacing (Size of space between effects) int 34
 late.hud.icon_scale (Scale factor of 16px effect icon) float 1.7
