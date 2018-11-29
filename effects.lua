@@ -554,9 +554,21 @@ end
 local physic_impacts =
 	{ jump = 'jump', gravity = 'gravity', speed = 'speed' }
 
-local function set_physics_override(player, table)
+local function set_physics_override(player, ...)
 	-- Separate physics managed by impacts from those still managed by
 	-- core api set_physics_override
+	local args = {...}
+	local table = {}
+
+	if #args == 1 and type(args[1]) == 'table' then
+		table = args[1]
+	elseif #args == 3 then -- Old non table version
+		table = {speed = args[1], jump = args[2], gravity = args[3]}
+	else
+		minetest.log('error', '[LATE] set_physics_override called with bad arguments')
+		return
+	end
+
 	local impacts = {}
 	local physics = {}
 	for physic, impact in pairs(physic_impacts) do
