@@ -173,9 +173,10 @@ function Effect:new(target, definition)
 
 	-- Default values
 	self.elapsed_time = self.elapsed_time or 0
-	self.time_intensity = self.time_intensity or 0
 	self.phase = self.phase or phase_raise
 	self.target = target
+
+	self.intensities = self.intensities or {}
 
 	-- Duration condition
 	if self.duration then
@@ -209,8 +210,8 @@ end
 
 -- TODO: Clip value to 0-1
 function Effect:change_intensity(intensity)
-	if self.intensity ~= intensity then
-		self.intensity = intensity
+	if self.intensities.custom == nil or self.intensities.custom ~= intensity then
+		self.intensities.custom = intensity
 		self.changed = true
 	end
 end
@@ -325,25 +326,29 @@ function Effect:step(dtime)
 
 	-- Time intensity and phases
 	if self.phase == phase_raise then
-		self.time_intensity = self.time_intensity
+		self.intensities.time = (self.intensities.time or 0)
 			+ (self.raise and dtime/self.raise or 1)
-		if self.time_intensity >= 1 then self.phase = phase_still end
+		if self.intensities.time >= 1 then self.phase = phase_still end
 	end
 
-	if self.phase == phase_still then self.time_intensity = 1 end
+	if self.phase == phase_still then self.intensities.time = 1 end
 
 	if self.phase == phase_fall then
-		self.time_intensity = self.time_intensity
+		self.intensities.time = (self.intensities.time or 0)
 			- (self.fall and dtime/self.fall or 1)
-		if self.time_intensity <= 0 then self.phase = phase_end end
+		if self.intensities.time <= 0 then self.phase = phase_end end
 	end
 
-	if self.phase == phase_end then self.time_intensity = 0 end
+	if self.phase == phase_end then self.intensities.time = 0 end
 
 	-- Commpute total intensity
-	local intensity = nvl(self.time_intensity, 1) * nvl(self.distance_intensity, 1)
+	local intensity = 1
+	for _, specific_intensity in pairs(self.intensities) do
+		intensity = intensity * specific_intensity
+	end
 
-	if intensity and data(self.target).modifiers then
+	-- Target modifiers (immunity, other effects interacting)
+	if intensity > 0 and data(self.target).modifiers then
 		for group, _ in pairs(self.groups or {}) do
 			intensity = intensity * nvl(data(self.target).modifiers[group], 1)
 		end

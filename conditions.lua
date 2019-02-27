@@ -119,7 +119,7 @@ minetest.register_abm({
 
 late.register_condition_type('near_node', {
 	check = function(data, target, effect)
-			return effect.distance_intensity ~= nil
+			return effect.intensities.distance ~= nil
 		end,
 	step = function(data, target, effect)
 		-- Discard too far or not uptodate nodes from near_nodes list and compute min
@@ -138,10 +138,10 @@ late.register_condition_type('near_node', {
 				end
 			end
 
-			if min_distance == nil then effect.distance_intensity = nil
+			if min_distance == nil then effect.intensities.distance = nil
 			else
 				--
-				effect.distance_intensity = data.spread and math.min(1, ((data.radius
+				effect.intensities.distance = data.spread and math.min(1, ((data.radius
 					or 0) + data.spread - min_distance) / data.spread) or 1
 			end
 		end,
