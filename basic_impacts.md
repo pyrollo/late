@@ -19,7 +19,7 @@ Parameters are a list of key/value pairs. Key is the name of effect group, value
 Immunizes againts *poison* and halves *damage* effects. *poison* and *damage* do not refer to any impact name but to effect group given in the ```groups``` field of effects definition.
 
 ## Jump [jump]
-**Targets**: Player  s
+**Targets**: Players
 **Status**: Ok
 
 Changes the jump height of the target (jump parameter of ```player:set_physics_override```).
