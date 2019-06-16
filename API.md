@@ -113,11 +113,13 @@ minetest.register_tool("mymod:poison", {
 ```
 
 ### Placing nodes
-Effects can be triggered by the proximity of a specific node.
+Effects can be triggered by the proximity of a specific node or being inside a specific node.
 
 To create a node with effect:
   * Add the node in `effect_trigger` group (`effect_trigger=1` in groups table);
-  * Add an `effect_near` field in the node definition __with a `distance`field__;
+  * Add either :
+    * `effect_near` field in the node definition __with a `distance`field__;
+    * `effect_in` field in the node definition;
 
 Example:
 ```lua
@@ -254,6 +256,7 @@ Registering new condition types allows to extend the available types of conditio
     * `target`: target affected,
     * `effect`: Effect object instance.
   * `step` (optional) = function(data, target, effect) A function called at each step. Could be useful to prepare condition checking. Same parameters as `check` function.
+  * `abm` (optional) = function(pos, node, node_def) A function called by an ABM on nodes of the groupe `effect_trigger`. This is used for `near_node` and `in_node` conditions.
 
 # Impacts registration
 ## register\_impact\_type
